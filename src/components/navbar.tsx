@@ -1,0 +1,86 @@
+import Image from "next/image";
+import Link from "next/link";
+import logo from "../../public/dami_logo.png";
+import { Button } from "./ui/button";
+
+export default function Navbar() {
+  return (
+    <div>
+      <div className="relative">
+        <header className="py-3">
+          <div className="max-w-7xl mx-auto px-4 xl:px-0">
+            <div className="bg-white flex items-center justify-between gap-x-4 rounded-2xl py-2.5 pl-5 pr-5 shadow-[0_2px_10px_0px_rgba(0,0,0,0.15)] lg:grid lg:grid-cols-[1fr_auto_1fr] lg:justify-stretch lg:gap-x-12 lg:rounded-[1.375rem]">
+              <div className="flex items-center text-center gap-x-10">
+                <Link href="/" title="Home">
+                  <Image
+                    className="h-8"
+                    src={logo}
+                    alt="Logo"
+                    width={64}
+                    height={64}
+                  />
+                  <span className="font-semibold">Damī</span>
+                </Link>
+                <span className="hidden h-4 w-[1px] bg-neutral-300 lg:block"></span>
+              </div>
+              <nav className="hidden lg:block">
+                <ul className="flex items-center">
+                  <li>
+                    <a
+                      className="flex items-center gap-x-1.5 px-3 py-2 text-sm font-medium text-neutral-700 transition hover:text-neutral-600"
+                      href="https://github.com"
+                    >
+                      GitHub
+                      <svg
+                        className="h-4 text-neutral-500"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        aria-hidden="true"
+                        data-slot="icon"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M8.25 3.75H19.5a.75.75 0 0 1 .75.75v11.25a.75.75 0 0 1-1.5 0V6.31L5.03 20.03a.75.75 0 0 1-1.06-1.06L17.69 5.25H8.25a.75.75 0 0 1 0-1.5Z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      className="px-3 py-2 text-sm font-medium text-neutral-700 transition hover:text-neutral-600"
+                      href="/about"
+                    >
+                      About
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+              <div className="flex items-center gap-x-10 justify-self-end">
+                <span className="hidden h-4 w-[1px] bg-neutral-300 lg:block"></span>
+                <div className="flex items-center gap-x-10 lg:gap-x-2">
+                  <Link href="/dummy" replace>
+                    <Button>
+                      Try Now!
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        className="bi bi-flask-fill"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M11.5 0a.5.5 0 0 1 0 1H11v5.358l4.497 7.36c.099.162.16.332.192.503l.013.063.008.083q.006.053.007.107l-.003.09q-.001.047-.005.095-.006.053-.017.106l-.016.079q-.012.049-.028.096l-.028.086a1.5 1.5 0 0 1-.17.322 1.5 1.5 0 0 1-.395.394q-.04.028-.082.054-.045.026-.095.049l-.073.035-.09.033q-.05.02-.103.034-.04.01-.08.017-.053.012-.108.021l-.006.002-.202.013H1.783l-.214-.015a1.503 1.503 0 0 1-1.066-2.268L5 6.359V1h-.5a.499.499 0 0 1-.354-.854A.5.5 0 0 1 4.5 0zm.5 12a.5.5 0 0 0 0 1h1.885l-.61-1zm-1-2a.5.5 0 0 0 0 1h1.664l-.612-1zm-1-2a.5.5 0 0 0 0 1h1.441l-.61-1zM9 6a.5.5 0 0 0 0 1h1.22l-.147-.24A.5.5 0 0 1 10 6.5V6zm0-2a.5.5 0 0 0 0 1h1V4zm0-2a.5.5 0 0 0 0 1h1V2z" />
+                      </svg>
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+      </div>
+    </div>
+  );
+}
