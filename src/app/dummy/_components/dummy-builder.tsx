@@ -165,12 +165,12 @@ function FieldRow({
 
   return (
     <div className="space-y-2" style={{ marginLeft: indentation }}>
-      <div className="flex items-start gap-3 font-mono text-sm text-slate-100">
-        <span className="w-9 select-none text-right text-xs text-slate-600">
+      <div className="flex items-start gap-3 font-mono text-sm text-foreground">
+        <span className="w-9 select-none text-right text-xs text-muted-foreground">
           {lineNumber}
         </span>
-        <div className="flex flex-1 flex-wrap items-center gap-2 rounded-lg border border-transparent px-2 py-1 transition hover:border-slate-700 hover:bg-slate-900/50">
-          <span className="text-slate-500">&quot;</span>
+        <div className="flex flex-1 flex-wrap items-center gap-2 rounded-lg border border-transparent px-2 py-1 transition hover:border-border/70 hover:bg-muted/50">
+          <span className="text-muted-foreground">&quot;</span>
           <Input
             defaultValue={field.name}
             {...register(namePath, { required: "Name is required" })}
@@ -178,10 +178,10 @@ function FieldRow({
             aria-required="true"
             aria-label="Field name"
             required
-            className="w-40 border-none bg-transparent px-0 py-0 text-emerald-200 placeholder:text-slate-600 focus-visible:border-transparent focus-visible:ring-0"
+            className="w-40 border-none bg-transparent px-0 py-0 text-emerald-200 placeholder:text-muted-foreground focus-visible:border-transparent focus-visible:ring-0"
           />
-          <span className="text-slate-500">&quot;</span>
-          <span className="text-slate-500">:</span>
+          <span className="text-muted-foreground">&quot;</span>
+          <span className="text-muted-foreground">:</span>
           <Select
             value={typeValue}
             onValueChange={(value) => handleTypeChange(value as JsonType)}
@@ -189,7 +189,7 @@ function FieldRow({
             <SelectTrigger className="h-auto border-none bg-transparent px-1 py-0 text-emerald-300 hover:text-emerald-200 focus:border-transparent focus:ring-0 focus-visible:ring-0">
               <SelectValue placeholder="type" />
             </SelectTrigger>
-            <SelectContent className="border-slate-700 bg-slate-900 text-slate-100">
+            <SelectContent className="border-border/70 bg-muted text-foreground">
               {typeOptions.map((option) => (
                 <SelectItem
                   key={option.value}
@@ -205,13 +205,13 @@ function FieldRow({
             <span className="text-emerald-300">{previewValue}</span>
           )}
           {typeValue !== "object" && !isLast && (
-            <span className="text-slate-500">,</span>
+            <span className="text-muted-foreground">,</span>
           )}
           <Button
             type="button"
             variant="ghost"
             size="icon-sm"
-            className="ml-auto border border-slate-800 bg-slate-900 px-2 py-0 text-xs text-slate-500 hover:border-red-400/60 hover:text-red-200"
+            className="ml-auto border border-border/70 bg-muted px-2 py-0 text-xs text-muted-foreground hover:border-red-400/60 hover:text-red-200"
             aria-label="Remove field"
             onClick={onRemove}
           >
@@ -230,11 +230,11 @@ function FieldRow({
         {...register(`${path}.id` as Path<FormValues>)}
       />
       {typeValue === "object" && (
-        <div className="flex items-start gap-3 font-mono text-sm text-slate-100">
-          <span className="w-9 select-none text-right text-xs text-slate-600">
+        <div className="flex items-start gap-3 font-mono text-sm text-foreground">
+          <span className="w-9 select-none text-right text-xs text-muted-foreground">
             {" "}
           </span>
-          <div className="space-y-2 border-l border-slate-800 pl-4">
+          <div className="space-y-2 border-l border-border/70 pl-4">
             <div>{"{"}</div>
             <div className="space-y-2">
               {childArray.fields.map(
@@ -269,19 +269,19 @@ function FieldRow({
             </div>
             <div className="flex items-center gap-2">
               <span>{"}"}</span>
-              {!isLast && <span className="text-slate-500">,</span>}
+              {!isLast && <span className="text-muted-foreground">,</span>}
             </div>
           </div>
         </div>
       )}
-      <div className="flex items-center gap-3 font-mono text-xs text-slate-500">
-        <span className="w-9 select-none text-right text-slate-600"> </span>
+      <div className="flex items-center gap-3 font-mono text-xs text-muted-foreground">
+        <span className="w-9 select-none text-right text-muted-foreground"> </span>
         <span>&#47;&#47;</span>
         <Input
           defaultValue={field.description}
           {...register(descriptionPath)}
           placeholder="Describe the purpose (optional)"
-          className="w-full max-w-md border-none bg-transparent px-0 py-0 text-slate-400 placeholder:text-slate-600 focus-visible:border-transparent focus-visible:ring-0"
+          className="w-full max-w-md border-none bg-transparent px-0 py-0 text-muted-foreground placeholder:text-muted-foreground focus-visible:border-transparent focus-visible:ring-0"
         />
       </div>
     </div>
@@ -347,9 +347,9 @@ export function DummyBuilder() {
           structure as you go.
         </FieldDescription>
 
-        <div className="mt-8 overflow-hidden rounded-2xl border border-slate-800 bg-slate-950 shadow-[0_24px_60px_-30px_rgba(15,23,42,0.65)]">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 bg-slate-900/70 px-4 py-3">
-            <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.3em] text-slate-400">
+        <div className="mt-8 overflow-hidden rounded-2xl border border-border/70 bg-card shadow-[0_24px_60px_-30px_rgba(15,23,42,0.65)]">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/70 bg-muted/70 px-4 py-3">
+            <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
               <span className="text-emerald-400">Damī</span>
               JSON Editor
             </div>
@@ -359,19 +359,19 @@ export function DummyBuilder() {
                 type="button"
                 variant="ghost"
                 onClick={handleAddField}
-                className="border border-slate-800 bg-slate-900/70 px-3 py-1 text-xs text-emerald-300 hover:bg-slate-900/40 hover:text-emerald-200"
+                className="border border-border/70 bg-muted/70 px-3 py-1 text-xs text-emerald-300 hover:bg-muted/40 hover:text-emerald-200"
               >
                 + Add property
               </Button>
             </div>
           </div>
           <div className="px-4 py-6">
-            <div className="font-mono text-xs uppercase tracking-widest text-slate-500">
+            <div className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
               &#47;&#47; root object
             </div>
-            <div className="mt-3 space-y-3 font-mono text-sm text-slate-100">
+            <div className="mt-3 space-y-3 font-mono text-sm text-foreground">
               <div>{"{"}</div>
-              <div className="space-y-3 border-l border-slate-800 pl-6">
+              <div className="space-y-3 border-l border-border/70 pl-6">
                 {rootArray.fields.map(
                   (field: FieldNode & { id: string }, index: number) => {
                     const fieldPath = `fields.${index}` as Path<FormValues>;
@@ -392,7 +392,7 @@ export function DummyBuilder() {
                   }
                 )}
                 {rootArray.fields.length === 0 && (
-                  <div className="text-xs text-slate-600">
+                  <div className="text-xs text-muted-foreground">
                     &#47;&#47; No properties yet — add your first one
                   </div>
                 )}
@@ -400,14 +400,14 @@ export function DummyBuilder() {
               <div>{"}"}</div>
             </div>
           </div>
-          <div className="flex flex-col gap-3 border-t border-slate-800 bg-slate-900/40 px-4 py-4 backdrop-blur md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col gap-3 border-t border-border/70 bg-muted/40 px-4 py-4 backdrop-blur md:flex-row md:items-center md:justify-between">
             <div className="flex flex-wrap items-center gap-3">
               <Button type="submit">Submit</Button>
               <Button type="button" variant="outline" onClick={handleReset}>
                 Reset
               </Button>
             </div>
-            <span className="font-mono text-xs text-slate-500">
+            <span className="font-mono text-xs text-muted-foreground">
               &#47;&#47; Submit to preview the JSON payload in your console
             </span>
           </div>
@@ -438,7 +438,7 @@ function ModelSelect({ control, setValue }: ModelSelectProps) {
         setValue("model", value as ModelOption, { shouldDirty: true });
       }}
     >
-      <SelectTrigger className="w-full cursor-pointer justify-between rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 md:w-56">
+      <SelectTrigger className="w-full cursor-pointer justify-between rounded-md border border-border bg-card px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/50 md:w-56">
         <div className="flex items-center gap-2">
           <span className="text-lg">{activeModel.logo}</span>
           <span>{activeModel.label}</span>
@@ -446,13 +446,13 @@ function ModelSelect({ control, setValue }: ModelSelectProps) {
       </SelectTrigger>
       <SelectContent
         align="end"
-        className="border border-neutral-200 bg-white text-neutral-800 shadow-lg"
+        className="border border-border bg-card text-foreground shadow-lg"
       >
         {MODEL_OPTIONS.map((option) => (
           <SelectItem
             key={option.value}
             value={option.value}
-            className="data-[state=checked]:bg-neutral-100"
+            className="data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary"
           >
             <div className="flex items-center gap-2">
               <span className="text-lg">{option.logo}</span>

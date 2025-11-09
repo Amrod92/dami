@@ -1,28 +1,27 @@
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
   return (
     <div>
       <div className="relative">
-        <section className="py-16 lg:pb-24">
-          <div className="max-w-7xl mx-auto px-4 xl:px-0 flex flex-col items-center text-center">
-            <div className="items-center justify-center rounded-full text-sm font-medium whitespace-nowrap shadow-[0_2px_10px_0px_rgba(0,0,0,0.15)] inline-flex bg-slate-900 text-white px-2.5 py-1 mt-8 md:mt-12 xl:mt-16">
+        <section className="relative flex min-h-[720px] w-full items-center py-16 lg:py-24">
+          <div className="mx-auto flex max-w-7xl flex-col items-center px-4 text-center xl:px-0">
+            <div className="mt-8 inline-flex items-center justify-center rounded-full bg-primary px-2.5 py-1 text-sm font-medium text-primary-foreground shadow-[0_2px_10px_0px_rgba(0,0,0,0.15)] md:mt-12 xl:mt-16">
               Introducing Damī
             </div>
-            <figure className="relative h-52 w-full overflow-hidden after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:bg-white sm:h-80 md:after:left-4 md:after:right-4 lg:h-96 lg:after:left-8 lg:after:right-8 xl:after:left-10 xl:after:right-10">
+            <figure className="relative h-52 w-full overflow-hidden after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:bg-border sm:h-80 md:after:left-4 md:after:right-4 lg:h-96 lg:after:left-8 lg:after:right-8 xl:after:left-10 xl:after:right-10">
               <img
-                className="absolute -bottom-6 left-1/2 h-60 w-11/12 -translate-x-1/2 rounded-md border-4 border-slate-900/5 object-cover object-left-top shadow-[0_2px_10px_0px_rgba(0,0,0,0.15)] sm:h-80 sm:w-5/6 lg:h-96 lg:w-2/3 lg:rounded-2xl"
+                className="absolute -bottom-6 left-1/2 h-60 w-11/12 -translate-x-1/2 rounded-md border-4 border-border/60 object-cover object-left-top shadow-[0_2px_10px_0px_rgba(0,0,0,0.15)] sm:h-80 sm:w-5/6 lg:h-96 lg:w-2/3 lg:rounded-2xl"
                 src="https://tailkits.com/ui/iframe/assets/img/browser-mock-up-1.png"
                 alt="Browser mockup"
               />
             </figure>
 
-            <div className="bg-gradient-to-b from-slate-800 to-slate-600 bg-clip-text text-3xl font-semibold text-transparent lg:text-5xl mt-4 sm:mx-auto sm:w-2/3 lg:mt-6 lg:leading-tight">
+            <div className="mt-4 bg-gradient-to-b from-primary to-primary/70 bg-clip-text text-3xl font-semibold text-transparent sm:mx-auto sm:w-2/3 lg:mt-6 lg:text-5xl lg:leading-tight">
               AI Dummy Data Tailored to Your Product
             </div>
-            <p className="mt-4 font-medium text-slate-600 sm:mx-auto sm:w-2/3 md:w-1/2 lg:mx-0 lg:mt-6 lg:w-2/5">
+            <p className="mt-4 font-medium text-muted-foreground sm:mx-auto sm:w-2/3 md:w-1/2 lg:mx-0 lg:mt-6 lg:w-2/5">
               Skip static placeholders. Damī generates production-like datasets
               that mirror your schema, tone, and edge cases, then packages them
               into downloadable JSON files so every prototype, test, and demo
@@ -45,20 +44,28 @@ export default function Home() {
               </Button>
             </Link>
           </div>
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent via-background/70 to-background"
+          />
         </section>
-        <section className="pt-6 lg:pt-6 relative pb-6 lg:pb-6">
-          <div className="max-w-7xl mx-auto px-4 xl:px-0 flex flex-col items-center">
-            <div className="items-center justify-center rounded-full text-sm font-medium whitespace-nowrap shadow-[0_2px_10px_0px_rgba(0,0,0,0.15)] inline-flex bg-white text-neutral-700 px-2.5 py-1">
+        <section className="relative pb-6 pt-6 lg:pb-6 lg:pt-6">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 -top-12 h-32 bg-gradient-to-b from-transparent via-background/80 to-background"
+          />
+          <div className="relative z-10 mx-auto flex max-w-7xl flex-col items-center px-4 xl:px-0">
+            <div className="inline-flex items-center justify-center rounded-full bg-card px-2.5 py-1 text-sm font-medium text-muted-foreground shadow-[0_2px_10px_0px_rgba(0,0,0,0.15)]">
               Platform Overview
             </div>
-            <div className="bg-gradient-to-b from-slate-800 to-slate-600 bg-clip-text text-3xl font-semibold text-transparent lg:text-5xl mt-6 text-center sm:mx-auto sm:w-1/2 md:mt-8 md:w-2/5 lg:w-1/2 lg:leading-tight xl:mt-9 xl:w-2/5">
+            <div className="mt-6 bg-gradient-to-b from-primary to-primary/70 bg-clip-text text-3xl font-semibold text-transparent lg:w-1/2 lg:text-5xl lg:leading-tight xl:mt-9 xl:w-2/5 sm:mx-auto sm:w-1/2 md:mt-8 md:w-2/5 text-center">
               Design Dummy Resources for SaaS Success
             </div>
             <div className="mt-12 grid gap-y-6 md:px-4 lg:mt-16 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-0 lg:px-8">
               <article className="flex flex-col items-start sm:mx-auto sm:w-2/3 lg:mx-0 lg:w-4/5 xl:w-2/3">
                 <figure>
                   <svg
-                    className="h-6 text-slate-400 lg:h-8"
+                    className="h-6 text-muted-foreground lg:h-8"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     fill="currentColor"
@@ -72,10 +79,10 @@ export default function Home() {
                     />
                   </svg>
                 </figure>
-                <div className="mt-4 font-bold text-neutral-700 md:text-lg lg:mt-6 xl:text-xl">
+                <div className="mt-4 font-bold text-foreground md:text-lg lg:mt-6 xl:text-xl">
                   Schema-Aware Generation
                 </div>
-                <p className="mt-2 text-sm font-medium text-neutral-500">
+                <p className="mt-2 text-sm font-medium text-muted-foreground">
                   Upload or describe your models and Damī fills every field with
                   believable values that respect formats, relationships, and
                   validation rules.
@@ -84,7 +91,7 @@ export default function Home() {
               <article className="flex flex-col items-start sm:mx-auto sm:w-2/3 lg:mx-0 lg:w-4/5 xl:w-2/3">
                 <figure>
                   <svg
-                    className="h-6 text-slate-400 lg:h-8"
+                    className="h-6 text-muted-foreground lg:h-8"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     fill="currentColor"
@@ -98,10 +105,10 @@ export default function Home() {
                     />
                   </svg>
                 </figure>
-                <div className="mt-4 font-bold text-neutral-700 md:text-lg lg:mt-6 xl:text-xl">
+                <div className="mt-4 font-bold text-foreground md:text-lg lg:mt-6 xl:text-xl">
                   Edge Cases on Demand
                 </div>
-                <p className="mt-2 text-sm font-medium text-neutral-500">
+                <p className="mt-2 text-sm font-medium text-muted-foreground">
                   Surface the tricky scenarios early. Generate outliers,
                   localized values, and time-based narratives, all bundled into
                   the same JSON export so you can test how your product behaves
@@ -111,7 +118,7 @@ export default function Home() {
               <article className="flex flex-col items-start sm:mx-auto sm:w-2/3 lg:mx-0 lg:w-4/5 xl:w-2/3">
                 <figure>
                   <svg
-                    className="h-6 text-slate-400 lg:h-8"
+                    className="h-6 text-muted-foreground lg:h-8"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     fill="currentColor"
@@ -126,10 +133,10 @@ export default function Home() {
                     />
                   </svg>
                 </figure>
-                <div className="mt-4 font-bold text-neutral-700 md:text-lg lg:mt-6 xl:text-xl">
+                <div className="mt-4 font-bold text-foreground md:text-lg lg:mt-6 xl:text-xl">
                   Shareable Presets
                 </div>
-                <p className="mt-2 text-sm font-medium text-neutral-500">
+                <p className="mt-2 text-sm font-medium text-muted-foreground">
                   Capture your best configurations once, then reuse and adapt
                   them across teams, clients, and environments—every run gives
                   you a fresh JSON file ready to share.

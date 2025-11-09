@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 
 export default function DummyPage() {
   return (
-    <section className="w-full space-y-6 py-6 lg:py-10">
+    <section className="w-full space-y-6 py-6 lg:py-10 text-foreground">
       <header className="space-y-3">
-        <h1 className="text-2xl font-semibold text-neutral-900 lg:text-3xl">
+        <h1 className="text-2xl font-semibold lg:text-3xl">
           Create your ideal dummy data in seconds
         </h1>
       </header>

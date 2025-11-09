@@ -1,38 +1,62 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import logo from "../../public/dami_logo.png";
 import { Button } from "./ui/button";
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Navbar() {
+  const { setTheme } = useTheme();
+
   return (
     <div>
       <div className="relative">
         <header className="py-3">
           <div className="max-w-7xl mx-auto px-4 xl:px-0">
-            <div className="bg-white flex items-center justify-between gap-x-4 rounded-2xl py-2.5 pl-5 pr-5 shadow-[0_2px_10px_0px_rgba(0,0,0,0.15)] lg:grid lg:grid-cols-[1fr_auto_1fr] lg:justify-stretch lg:gap-x-12 lg:rounded-[1.375rem]">
+            <div className="flex items-center justify-between gap-x-4 rounded-2xl border border-border/60 bg-card px-5 py-2.5 text-card-foreground shadow-[0_2px_10px_0px_rgba(0,0,0,0.15)] transition-colors lg:grid lg:grid-cols-[1fr_auto_1fr] lg:justify-stretch lg:gap-x-12 lg:rounded-[1.375rem]">
               <div className="flex items-center text-center gap-x-10">
                 <Link href="/" title="Home">
-                  <Image
-                    className="h-8"
-                    src={logo}
-                    alt="Logo"
-                    width={64}
-                    height={64}
-                  />
-                  <span className="font-semibold">Damī</span>
+                  <>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      aria-label="Damī — Brackets and Slashes"
+                    >
+                      <g
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.25"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M6 10 V6 H9" />
+                        <path d="M18 14 v4 h-3" />
+                        <path d="M9.75 15 L13.25 9" />
+                        <path d="M12.25 15 L15.75 9" />
+                      </g>
+                    </svg>
+                  </>
+                  <span className="font-semibold text-foreground">Damī</span>
                 </Link>
-                <span className="hidden h-4 w-[1px] bg-neutral-300 lg:block"></span>
+                <span className="hidden h-4 w-[1px] bg-border lg:block"></span>
               </div>
               <nav className="hidden lg:block">
                 <ul className="flex items-center">
                   <li>
                     <a
-                      className="flex items-center gap-x-1.5 px-3 py-2 text-sm font-medium text-neutral-700 transition hover:text-neutral-600"
+                      className="flex items-center gap-x-1.5 px-3 py-2 text-sm font-medium text-muted-foreground transition hover:text-foreground"
                       href="https://github.com"
                     >
                       GitHub
                       <svg
-                        className="h-4 text-neutral-500"
+                        className="h-4 text-muted-foreground"
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
                         fill="currentColor"
@@ -49,7 +73,7 @@ export default function Navbar() {
                   </li>
                   <li>
                     <a
-                      className="px-3 py-2 text-sm font-medium text-neutral-700 transition hover:text-neutral-600"
+                      className="px-3 py-2 text-sm font-medium text-muted-foreground transition hover:text-foreground"
                       href="/about"
                     >
                       About
@@ -58,7 +82,7 @@ export default function Navbar() {
                 </ul>
               </nav>
               <div className="flex items-center gap-x-10 justify-self-end">
-                <span className="hidden h-4 w-[1px] bg-neutral-300 lg:block"></span>
+                <span className="hidden h-4 w-[1px] bg-border lg:block"></span>
                 <div className="flex items-center gap-x-10 lg:gap-x-2">
                   <Link href="/dummy" replace>
                     <Button>
@@ -75,6 +99,30 @@ export default function Navbar() {
                       </svg>
                     </Button>
                   </Link>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        className="text-foreground"
+                        variant="outline"
+                        size="icon"
+                      >
+                        <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 text-foreground transition-all dark:scale-0 dark:-rotate-90" />
+                        <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 text-foreground transition-all dark:scale-100 dark:rotate-0" />
+                        <span className="sr-only">Toggle theme</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => setTheme("light")}>
+                        Light
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setTheme("dark")}>
+                        Dark
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setTheme("system")}>
+                        System
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
             </div>
