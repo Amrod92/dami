@@ -47,10 +47,19 @@ const MODEL_OPTIONS = [
   { value: "gemini", label: "Gemini 2.5 Flash", logo: "🔷" },
 ] as const;
 
+const MIN_SAMPLE_COUNT = 1;
+const MAX_SAMPLE_COUNT = 5;
+const DEFAULT_SAMPLE_COUNT = 1;
+const MIN_RECORDS_PER_SAMPLE = 1;
+const MAX_RECORDS_PER_SAMPLE = 50;
+const DEFAULT_RECORDS_PER_SAMPLE = 1;
+
 type ModelOption = (typeof MODEL_OPTIONS)[number]["value"];
 
 type FormValues = {
   model: ModelOption;
+  samples: number;
+  recordsPerSample: number;
   fields: FieldNode[];
 };
 
@@ -63,8 +72,8 @@ type DummyApiResponse = {
     variations: number;
   };
   data?: {
-    primary: Record<string, unknown>;
-    variations: Record<string, unknown>[];
+    primary: Record<string, unknown>[];
+    variations: Record<string, unknown>[][];
   };
   notes?: string[];
   error?: string;
@@ -310,6 +319,8 @@ export function DummyBuilder() {
   const defaultValues = useMemo<FormValues>(
     () => ({
       model: MODEL_OPTIONS[0].value,
+      samples: DEFAULT_SAMPLE_COUNT,
+      recordsPerSample: DEFAULT_RECORDS_PER_SAMPLE,
       fields: [createField()],
     }),
     []
@@ -339,9 +350,14 @@ export function DummyBuilder() {
     name: "fields",
   });
 
+  const primaryRecords = lastResponse?.data?.primary ?? [];
+  const variationSets = lastResponse?.data?.variations ?? [];
+
   const resetToDefaults = () => {
     const freshDefaults = {
       model: MODEL_OPTIONS[0].value,
+      samples: DEFAULT_SAMPLE_COUNT,
+      recordsPerSample: DEFAULT_RECORDS_PER_SAMPLE,
       fields: [createField()],
     };
     reset(freshDefaults);
@@ -428,6 +444,8 @@ export function DummyBuilder() {
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <ModelSelect control={control} setValue={setValue} />
+              <SampleCountInput control={control} setValue={setValue} />
+              <RecordsPerSampleInput control={control} setValue={setValue} />
               <Button
                 type="button"
                 variant="ghost"
@@ -518,30 +536,28 @@ export function DummyBuilder() {
                 <div className="space-y-3">
                   <div>
                     <div className="text-muted-foreground">
-                      {"// primary record"}
+                      {"// primary sample"}
                     </div>
                     <pre className="mt-1 max-h-64 overflow-auto rounded-lg bg-background/70 p-3 text-xs text-emerald-100">
-                      {JSON.stringify(lastResponse.data.primary, null, 2)}
+                      {JSON.stringify(primaryRecords, null, 2)}
                     </pre>
                   </div>
-                  {lastResponse.data.variations.length > 0 && (
+                  {variationSets.length > 0 && (
                     <div>
                       <div className="text-muted-foreground">
                         {"// alternate samples"}
                       </div>
-                      <div className="mt-1 space-y-2">
-                        {lastResponse.data.variations.map(
-                          (variation, index) => {
-                            return (
-                              <pre
-                                key={index}
-                                className="max-h-64 overflow-auto rounded-lg bg-background/60 p-3 text-xs text-blue-100"
-                              >
-                                {JSON.stringify(variation, null, 2)}
-                              </pre>
-                            );
-                          }
-                        )}
+                      <div className="mt-1 space-y-3">
+                        {variationSets.map((variation, index) => (
+                          <div key={index} className="space-y-2">
+                            <div className="text-muted-foreground">
+                              Variation {index + 1}
+                            </div>
+                            <pre className="max-h-64 overflow-auto rounded-lg bg-background/60 p-3 text-xs text-blue-100">
+                              {JSON.stringify(variation, null, 2)}
+                            </pre>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   )}
@@ -612,5 +628,107 @@ function ModelSelect({ control, setValue }: ModelSelectProps) {
         ))}
       </SelectContent>
     </Select>
+  );
+}
+
+function SampleCountInput({ control, setValue }: ModelSelectProps) {
+  const samples = useWatch({
+    control,
+    name: "samples",
+  }) as number | undefined;
+
+  const handleChange = (value: string) => {
+    const parsed = Number(value);
+
+    if (Number.isNaN(parsed)) {
+      setValue("samples", DEFAULT_SAMPLE_COUNT, { shouldDirty: true });
+      return;
+    }
+
+    const clamped = Math.min(
+      MAX_SAMPLE_COUNT,
+      Math.max(MIN_SAMPLE_COUNT, Math.floor(parsed))
+    );
+
+    setValue("samples", clamped, { shouldDirty: true });
+  };
+
+  const displayValue =
+    typeof samples === "number" && !Number.isNaN(samples)
+      ? samples
+      : DEFAULT_SAMPLE_COUNT;
+
+  return (
+    <label className="flex items-center gap-3 rounded-md border border-border bg-card px-3 py-2 text-sm text-foreground">
+      <div className="flex flex-col text-left text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+        <span>Samples</span>
+        <span className="normal-case text-muted-foreground/70">
+          {MIN_SAMPLE_COUNT}-{MAX_SAMPLE_COUNT}
+        </span>
+      </div>
+      <Input
+        type="number"
+        inputMode="numeric"
+        min={MIN_SAMPLE_COUNT}
+        max={MAX_SAMPLE_COUNT}
+        step={1}
+        value={displayValue}
+        onChange={(event) => handleChange(event.target.value)}
+        className="w-20 border-none bg-transparent text-right font-mono focus-visible:ring-0"
+        aria-label="Number of sample sets"
+      />
+    </label>
+  );
+}
+
+function RecordsPerSampleInput({ control, setValue }: ModelSelectProps) {
+  const recordsPerSample = useWatch({
+    control,
+    name: "recordsPerSample",
+  }) as number | undefined;
+
+  const handleChange = (value: string) => {
+    const parsed = Number(value);
+
+    if (Number.isNaN(parsed)) {
+      setValue("recordsPerSample", DEFAULT_RECORDS_PER_SAMPLE, {
+        shouldDirty: true,
+      });
+      return;
+    }
+
+    const clamped = Math.min(
+      MAX_RECORDS_PER_SAMPLE,
+      Math.max(MIN_RECORDS_PER_SAMPLE, Math.floor(parsed))
+    );
+
+    setValue("recordsPerSample", clamped, { shouldDirty: true });
+  };
+
+  const displayValue =
+    typeof recordsPerSample === "number" && !Number.isNaN(recordsPerSample)
+      ? recordsPerSample
+      : DEFAULT_RECORDS_PER_SAMPLE;
+
+  return (
+    <label className="flex items-center gap-3 rounded-md border border-border bg-card px-3 py-2 text-sm text-foreground">
+      <div className="flex flex-col text-left text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+        <span>Records</span>
+        <span className="normal-case text-muted-foreground/70">
+          {MIN_RECORDS_PER_SAMPLE}-{MAX_RECORDS_PER_SAMPLE}
+        </span>
+      </div>
+      <Input
+        type="number"
+        inputMode="numeric"
+        min={MIN_RECORDS_PER_SAMPLE}
+        max={MAX_RECORDS_PER_SAMPLE}
+        step={1}
+        value={displayValue}
+        onChange={(event) => handleChange(event.target.value)}
+        className="w-24 border-none bg-transparent text-right font-mono focus-visible:ring-0"
+        aria-label="Records per sample"
+      />
+    </label>
   );
 }
