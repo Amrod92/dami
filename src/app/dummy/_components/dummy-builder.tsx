@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   Control,
   FieldArrayPath,
@@ -43,8 +43,8 @@ const typeOptions: { value: JsonType; label: string }[] = [
 ];
 
 const MODEL_OPTIONS = [
-  { value: "chatgpt", label: "ChatGPT 4o-mini", logo: "🌀" },
-  { value: "gemini", label: "Gemini 1.5 Flash", logo: "🔷" },
+  { value: "chatgpt", label: "OpenAI GPT-4.1 Mini", logo: "🌀" },
+  { value: "gemini", label: "Gemini 2.5 Flash", logo: "🔷" },
 ] as const;
 
 type ModelOption = (typeof MODEL_OPTIONS)[number]["value"];
@@ -52,6 +52,22 @@ type ModelOption = (typeof MODEL_OPTIONS)[number]["value"];
 type FormValues = {
   model: ModelOption;
   fields: FieldNode[];
+};
+
+type DummyApiResponse = {
+  message?: string;
+  submittedAt?: string;
+  model?: string;
+  totals?: {
+    fields: number;
+    variations: number;
+  };
+  data?: {
+    primary: Record<string, unknown>;
+    variations: Record<string, unknown>[];
+  };
+  notes?: string[];
+  error?: string;
 };
 
 function defaultValueForType(type: JsonType): string {
@@ -275,7 +291,9 @@ function FieldRow({
         </div>
       )}
       <div className="flex items-center gap-3 font-mono text-xs text-muted-foreground">
-        <span className="w-9 select-none text-right text-muted-foreground"> </span>
+        <span className="w-9 select-none text-right text-muted-foreground">
+          {" "}
+        </span>
         <span>&#47;&#47;</span>
         <Input
           defaultValue={field.description}
@@ -300,6 +318,19 @@ export function DummyBuilder() {
   const form = useForm<FormValues>({
     defaultValues,
   });
+
+  const [submitState, setSubmitState] = useState<
+    | { status: "idle" }
+    | { status: "loading" }
+    | { status: "success"; message?: string }
+    | { status: "error"; message: string }
+  >({
+    status: "idle",
+  });
+
+  const [lastResponse, setLastResponse] = useState<DummyApiResponse | null>(
+    null
+  );
 
   const { control, register, handleSubmit, reset, setValue } = form;
 
@@ -331,11 +362,53 @@ export function DummyBuilder() {
 
   const handleReset = () => {
     resetToDefaults();
+    setSubmitState({ status: "idle" });
+    setLastResponse(null);
   };
 
-  const onSubmit = (data: FormValues) => {
-    // eslint-disable-next-line no-console
-    console.log("Dummy data payload:", data);
+  const onSubmit = async (data: FormValues) => {
+    setSubmitState({ status: "loading" });
+    setLastResponse(null);
+
+    try {
+      const response = await fetch("/api/dummy", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        let errorMessage = "Failed to submit dummy payload";
+
+        try {
+          const errorBody = await response.json();
+          errorMessage = errorBody?.error ?? errorMessage;
+        } catch {
+          // ignore body parsing errors - keep default message
+        }
+
+        throw new Error(errorMessage);
+      }
+
+      const responseBody = (await response.json()) as DummyApiResponse;
+
+      setSubmitState({
+        status: "success",
+        message:
+          responseBody?.message ?? "Dummy payload submitted successfully.",
+      });
+      setLastResponse(responseBody);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Unexpected error while submitting payload";
+
+      setSubmitState({ status: "error", message });
+      setLastResponse(null);
+    }
   };
 
   return (
@@ -402,15 +475,92 @@ export function DummyBuilder() {
           </div>
           <div className="flex flex-col gap-3 border-t border-border/70 bg-muted/40 px-4 py-4 backdrop-blur md:flex-row md:items-center md:justify-between">
             <div className="flex flex-wrap items-center gap-3">
-              <Button type="submit">Submit</Button>
+              <Button type="submit" disabled={submitState.status === "loading"}>
+                {submitState.status === "loading" ? "Submitting..." : "Submit"}
+              </Button>
               <Button type="button" variant="outline" onClick={handleReset}>
                 Reset
               </Button>
             </div>
-            <span className="font-mono text-xs text-muted-foreground">
-              &#47;&#47; Submit to preview the JSON payload in your console
+            <span
+              className={`font-mono text-xs ${
+                submitState.status === "error"
+                  ? "text-red-300"
+                  : submitState.status === "success"
+                  ? "text-emerald-300"
+                  : "text-muted-foreground"
+              }`}
+            >
+              {submitState.status === "idle" &&
+                "// Submit to send the JSON structure to the API"}
+              {submitState.status === "loading" &&
+                "// Sending payload to /api/dummy"}
+              {submitState.status === "success" &&
+                `// ${submitState.message ?? "Payload accepted"}`}
+              {submitState.status === "error" && `// ${submitState.message}`}
             </span>
           </div>
+          {lastResponse?.data && (
+            <div className="border-t border-border/70 bg-card/60 px-4 py-4">
+              <div className="flex flex-col gap-2 font-mono text-xs text-muted-foreground">
+                <div className="flex flex-wrap items-center justify-between gap-2 text-foreground">
+                  <span className="tracking-widest uppercase">
+                    Generated dataset
+                  </span>
+                  {lastResponse.totals && (
+                    <span>
+                      {lastResponse.totals.variations} sample
+                      {lastResponse.totals.variations === 1 ? "" : "s"} •{" "}
+                      {lastResponse.totals.fields} fields
+                    </span>
+                  )}
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <div className="text-muted-foreground">
+                      {"// primary record"}
+                    </div>
+                    <pre className="mt-1 max-h-64 overflow-auto rounded-lg bg-background/70 p-3 text-xs text-emerald-100">
+                      {JSON.stringify(lastResponse.data.primary, null, 2)}
+                    </pre>
+                  </div>
+                  {lastResponse.data.variations.length > 0 && (
+                    <div>
+                      <div className="text-muted-foreground">
+                        {"// alternate samples"}
+                      </div>
+                      <div className="mt-1 space-y-2">
+                        {lastResponse.data.variations.map(
+                          (variation, index) => {
+                            return (
+                              <pre
+                                key={index}
+                                className="max-h-64 overflow-auto rounded-lg bg-background/60 p-3 text-xs text-blue-100"
+                              >
+                                {JSON.stringify(variation, null, 2)}
+                              </pre>
+                            );
+                          }
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  {lastResponse.notes && lastResponse.notes.length > 0 && (
+                    <div>
+                      <div className="text-muted-foreground">
+                        {"// validation notes"}
+                      </div>
+                      <ul className="mt-1 list-disc space-y-1 pl-6 text-foreground">
+                        {lastResponse.notes.map((note, index) => {
+                          return <li key={index}>{note}</li>;
+                        })}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </FieldSet>
     </form>
