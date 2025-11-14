@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Control,
   FieldArrayPath,
@@ -342,6 +342,13 @@ export function DummyBuilder() {
   const [lastResponse, setLastResponse] = useState<DummyApiResponse | null>(
     null
   );
+  type CopyState = "idle" | "copying" | "copied" | "error";
+  const [copyStatusMap, setCopyStatusMap] = useState<Record<string, CopyState>>(
+    {}
+  );
+  const copyResetRefs = useRef<
+    Record<string, ReturnType<typeof setTimeout>>
+  >({});
 
   const { control, register, handleSubmit, reset, setValue } = form;
 
@@ -352,6 +359,15 @@ export function DummyBuilder() {
 
   const primaryRecords = lastResponse?.data?.primary ?? [];
   const variationSets = lastResponse?.data?.variations ?? [];
+
+  useEffect(() => {
+    return () => {
+      Object.values(copyResetRefs.current).forEach((timeoutId) => {
+        clearTimeout(timeoutId);
+      });
+      copyResetRefs.current = {};
+    };
+  }, []);
 
   const resetToDefaults = () => {
     const freshDefaults = {
@@ -380,6 +396,7 @@ export function DummyBuilder() {
     resetToDefaults();
     setSubmitState({ status: "idle" });
     setLastResponse(null);
+    resetAllCopyStatuses();
   };
 
   const onSubmit = async (data: FormValues) => {
@@ -415,6 +432,7 @@ export function DummyBuilder() {
         message:
           responseBody?.message ?? "Dummy payload submitted successfully.",
       });
+      resetAllCopyStatuses();
       setLastResponse(responseBody);
     } catch (error) {
       const message =
@@ -424,6 +442,69 @@ export function DummyBuilder() {
 
       setSubmitState({ status: "error", message });
       setLastResponse(null);
+    }
+  };
+
+  const getCopyStatus = (key: string): CopyState =>
+    copyStatusMap[key] ?? "idle";
+
+  const clearCopyTimeout = (key: string) => {
+    if (copyResetRefs.current[key]) {
+      clearTimeout(copyResetRefs.current[key]);
+      delete copyResetRefs.current[key];
+    }
+  };
+
+  const updateCopyStatus = (key: string, status: CopyState) => {
+    setCopyStatusMap((prev) => ({ ...prev, [key]: status }));
+  };
+
+  const resetAllCopyStatuses = () => {
+    Object.keys(copyResetRefs.current).forEach((key) => {
+      clearCopyTimeout(key);
+    });
+    setCopyStatusMap({});
+  };
+
+  const formatCopyLabel = (status: CopyState): string => {
+    switch (status) {
+      case "copying":
+        return "Copying...";
+      case "copied":
+        return "Copied!";
+      case "error":
+        return "Copy failed";
+      default:
+        return "Copy JSON";
+    }
+  };
+
+  const handleCopyBlock = async (key: string, payload: unknown) => {
+    if (typeof payload === "undefined") {
+      return;
+    }
+
+    clearCopyTimeout(key);
+    updateCopyStatus(key, "copying");
+
+    try {
+      if (
+        typeof navigator === "undefined" ||
+        !navigator.clipboard ||
+        typeof navigator.clipboard.writeText !== "function"
+      ) {
+        throw new Error("Clipboard API is unavailable.");
+      }
+
+      await navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
+      updateCopyStatus(key, "copied");
+    } catch {
+      updateCopyStatus(key, "error");
+    } finally {
+      copyResetRefs.current[key] = setTimeout(() => {
+        updateCopyStatus(key, "idle");
+        clearCopyTimeout(key);
+      }, 2000);
     }
   };
 
@@ -521,12 +602,12 @@ export function DummyBuilder() {
           {lastResponse?.data && (
             <div className="border-t border-border/70 bg-card/60 px-4 py-4">
               <div className="flex flex-col gap-2 font-mono text-xs text-muted-foreground">
-                <div className="flex flex-wrap items-center justify-between gap-2 text-foreground">
+                <div className="flex flex-wrap items-center gap-2 text-foreground">
                   <span className="tracking-widest uppercase">
                     Generated dataset
                   </span>
                   {lastResponse.totals && (
-                    <span>
+                    <span className="ml-auto text-muted-foreground">
                       {lastResponse.totals.variations} sample
                       {lastResponse.totals.variations === 1 ? "" : "s"} •{" "}
                       {lastResponse.totals.fields} fields
@@ -535,8 +616,23 @@ export function DummyBuilder() {
                 </div>
                 <div className="space-y-3">
                   <div>
-                    <div className="text-muted-foreground">
-                      {"// primary sample"}
+                    <div className="flex items-center justify-between text-muted-foreground">
+                      <span>{"// primary sample"}</span>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="font-mono text-[11px]"
+                        onClick={() =>
+                          handleCopyBlock("primary", primaryRecords)
+                        }
+                        disabled={
+                          primaryRecords.length === 0 ||
+                          getCopyStatus("primary") === "copying"
+                        }
+                      >
+                        {formatCopyLabel(getCopyStatus("primary"))}
+                      </Button>
                     </div>
                     <pre className="mt-1 max-h-64 overflow-auto rounded-lg bg-background/70 p-3 text-xs text-emerald-100">
                       {JSON.stringify(primaryRecords, null, 2)}
@@ -550,8 +646,29 @@ export function DummyBuilder() {
                       <div className="mt-1 space-y-3">
                         {variationSets.map((variation, index) => (
                           <div key={index} className="space-y-2">
-                            <div className="text-muted-foreground">
-                              Variation {index + 1}
+                            <div className="flex items-center justify-between text-muted-foreground">
+                              <span>Variation {index + 1}</span>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                className="font-mono text-[11px]"
+                                onClick={() =>
+                                  handleCopyBlock(
+                                    `variation-${index}`,
+                                    variation
+                                  )
+                                }
+                                disabled={
+                                  variation.length === 0 ||
+                                  getCopyStatus(`variation-${index}`) ===
+                                    "copying"
+                                }
+                              >
+                                {formatCopyLabel(
+                                  getCopyStatus(`variation-${index}`)
+                                )}
+                              </Button>
                             </div>
                             <pre className="max-h-64 overflow-auto rounded-lg bg-background/60 p-3 text-xs text-blue-100">
                               {JSON.stringify(variation, null, 2)}
