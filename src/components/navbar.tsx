@@ -52,7 +52,7 @@ export default function Navbar() {
                   <li>
                     <a
                       className="flex items-center gap-x-1.5 px-3 py-2 text-sm font-medium text-muted-foreground transition hover:text-foreground"
-                      href="https://github.com"
+                      href="https://github.com/Amrod92/dami"
                     >
                       GitHub
                       <svg
