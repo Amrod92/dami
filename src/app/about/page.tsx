@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About",
+  description:
+    "Learn how Damī generates realistic dummy data, enforces schemas, and accelerates QA and demo workflows.",
+};
+
 export default function AboutPage() {
   return (
     <div>

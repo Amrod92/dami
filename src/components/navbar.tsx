@@ -1,7 +1,5 @@
 "use client";
-import Image from "next/image";
 import Link from "next/link";
-import logo from "../../public/dami_logo.png";
 import { Button } from "./ui/button";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -50,9 +48,11 @@ export default function Navbar() {
               <nav className="hidden lg:block">
                 <ul className="flex items-center">
                   <li>
-                    <a
+                    <Link
                       className="flex items-center gap-x-1.5 px-3 py-2 text-sm font-medium text-muted-foreground transition hover:text-foreground"
                       href="https://github.com/Amrod92/dami"
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
                       GitHub
                       <svg
@@ -69,7 +69,7 @@ export default function Navbar() {
                           clipRule="evenodd"
                         />
                       </svg>
-                    </a>
+                    </Link>
                   </li>
                   <li>
                     <a

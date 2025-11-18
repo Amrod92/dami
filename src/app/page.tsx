@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Homepage",
+  description:
+    "Explore Damī, the AI-powered dummy data builder that turns field blueprints into production-ready JSON datasets.",
+};
 
 export default function Home() {
   return (
